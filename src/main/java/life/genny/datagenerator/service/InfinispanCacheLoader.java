@@ -3,6 +3,7 @@ package life.genny.datagenerator.service;
 import io.quarkus.arc.Priority;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
+import life.genny.datagenerator.Constant;
 import life.genny.datagenerator.data.schemas.*;
 import life.genny.datagenerator.data.serialization.SchemaInitializerImpl;
 import life.genny.datagenerator.utils.CacheUtils;
@@ -32,9 +33,7 @@ import java.util.*;
 public class InfinispanCacheLoader {
 
     private static final Logger LOGGER = Logger.getLogger(InfinispanCacheLoader.class);
-    private static final String HOTROD_CLIENT_PROPERTIES = "hotrod-client.properties";
-    private static final String ATTRIBUTE_CACHE_NAME = "be_attr";
-    private static final String BASEENTITY_CACHE_NAME = "be";
+
 
     private RemoteCacheManager remoteCacheManager;
     private RemoteCache<String, String> beCache;
@@ -58,6 +57,7 @@ public class InfinispanCacheLoader {
     private void onCacheBuild(){
         LOGGER.debug("onCacheBuild");
         URL tableStoreCacheConfig = CacheUtils.class.getClassLoader().getResource("META-INF/protobuf/tableStore.xml");
+        LOGGER.debug("Config..........."+tableStoreCacheConfig);
         cacheUtils.setTableStoreCacheConfig(tableStoreCacheConfig);
         beCache = getBECache();
         beAttrCache = getBEAttrCache();
@@ -78,10 +78,10 @@ public class InfinispanCacheLoader {
         builder.classLoader(cl);
 
         // load infinispan properties
-        InputStream stream = FileLookupFactory.newInstance().lookupFile(HOTROD_CLIENT_PROPERTIES, cl);
+        InputStream stream = FileLookupFactory.newInstance().lookupFile(Constant.HOTROD_CLIENT_PROPERTIES, cl);
 
         if (stream == null) {
-            LOGGER.error("Could not find infinispan hotrod client properties file: " + HOTROD_CLIENT_PROPERTIES);
+            LOGGER.error("Could not find infinispan hotrod client properties file: " + Constant.HOTROD_CLIENT_PROPERTIES);
             return;
         }
 
@@ -116,24 +116,25 @@ public class InfinispanCacheLoader {
     }
 
     private RemoteCache<String, String> getBECache() {
-        return cacheUtils.createCache(BASEENTITY_CACHE_NAME, "baseentity", BaseEntityKey.class, BaseEntity.class.getSimpleName());
+        return cacheUtils.createCache(Constant.BASEENTITY_CACHE_NAME, "baseentity", BaseEntityKey.class, BaseEntity.class.getSimpleName());
     }
 
     private RemoteCache<String, String> getBEAttrCache() {
-        return cacheUtils.createCache(ATTRIBUTE_CACHE_NAME, "baseentity_attribute", BaseEntityAttributeKey.class,
+        return cacheUtils.createCache(Constant.ATTRIBUTE_CACHE_NAME, "baseentity_attribute", BaseEntityAttributeKey.class,
                 BaseEntityAttribute.class.getSimpleName());
     }
 
     private void insertDataIntoInfinispan(BaseEntity be) {
-        LOGGER.debug(be.toString());
+        //LOGGER.debug(be.toString());
         List<BaseEntityAttribute> beAttrs = be.getAttributes();
-        boolean success = CacheUtils.putEntityIntoCache(remoteCacheManager, BASEENTITY_CACHE_NAME, be.getMessageKey(), be);
+        boolean success = CacheUtils.putEntityIntoCache(remoteCacheManager, Constant.BASEENTITY_CACHE_NAME, be.getMessageKey(), be);
         if (!success) LOGGER.error("Failed to insert: " + be.toString());
         for (int i =0; i < beAttrs.size(); i++) {
+        	//LOGGER.debug(i+" bea");
             BaseEntityAttribute beAttr = beAttrs.get(i);
             beAttr.setBASEENTITY_ID(be.getId());
             beAttr.setATTRIBUTE_ID((long) i);
-            CacheUtils.putEntityIntoCache(remoteCacheManager, ATTRIBUTE_CACHE_NAME, beAttr.getMessageKey(), beAttr);
+            CacheUtils.putEntityIntoCache(remoteCacheManager, Constant.ATTRIBUTE_CACHE_NAME, beAttr.getMessageKey(), beAttr);
         }
     }
 

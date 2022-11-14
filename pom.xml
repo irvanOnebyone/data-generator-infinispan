@@ -71,6 +71,25 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+	<dependency>
+    <groupId>org.infinispan</groupId>
+    <artifactId>infinispan-server-testdriver-junit5</artifactId>
+    <version>14.0.0.Final</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>testcontainers</artifactId>
+    <version>1.17.5</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <version>1.17.5</version>
+    <scope>test</scope>
+</dependency>
+
   </dependencies>
   <build>
     <plugins>
@@ -150,4 +169,6 @@
       </properties>
     </profile>
   </profiles>
+  
 </project>
+

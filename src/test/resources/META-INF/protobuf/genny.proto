@@ -1,0 +1,73 @@
+package genny;
+
+message BaseEntityKey {
+  optional string realm = 5;
+  optional string code = 7;
+}
+
+/**
+ * @Indexed
+ */
+message BaseEntity {
+  optional string dtype = 1;
+  optional int64 id = 2;
+  optional int64 created = 3;
+  optional string name = 4;
+  /**
+   * @Field(index=Index.YES, store = Store.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition = "keyword"))
+   */
+  optional string realm = 5;
+  optional int64 updated = 6;
+  /**
+   * @Field(index=Index.YES, store = Store.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition = "keyword"))
+   */
+  optional string code = 7;
+  optional int32 status = 8;
+}
+
+message BaseEntityAttributeKey {
+  optional string attributeCode = 1;
+  optional string baseEntityCode = 2;
+  optional string realm = 7;
+}
+
+/**
+ * @Indexed
+ */
+message BaseEntityAttribute {
+  /**
+   * @Field(index=Index.YES, store = Store.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition = "keyword"))
+   */
+  optional string attributeCode = 1;
+  /**
+   * @Field(index=Index.YES, store = Store.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition = "keyword"))
+   */
+  optional string baseEntityCode = 2;
+  optional int64 created = 3;
+  optional bool inferred = 4;
+  optional bool privacyFlag = 5;
+  optional bool readonly = 6;
+  /**
+   * @Field(index=Index.YES, store = Store.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition = "keyword"))
+   */
+  optional string realm = 7;
+  optional int64 updated = 8;
+  optional bool valueBoolean = 9;
+  optional int64 valueDate = 10;
+  optional int64 valueDateRange = 11;
+  optional int64 valueDateTime = 12;
+  optional double valueDouble = 13;
+  optional int32 valueInteger = 14;
+  optional int64 valueLong = 15;
+  optional string money = 16;
+  optional string valueString = 17;
+  optional int64 valueTime = 18;
+  optional double weight = 19;
+  /**
+   * @Field(index=Index.YES, store = Store.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition = "keyword"))
+   */
+  optional int64 ATTRIBUTE_ID = 20;
+  optional int64 BASEENTITY_ID = 21;
+  optional string icon = 22;
+  optional bool confirmationFlag = 23;
+}

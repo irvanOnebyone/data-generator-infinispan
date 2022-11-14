@@ -18,7 +18,7 @@
             <schema key-message-name="MESSAGE_KEY"
                     message-name="MESSAGE_NAME"
                     package="PACKAGE"
-                    embedded-key="true"/>
+                    embedded-key="true"></schema>
         </table-jdbc-store>
     </persistence>
     <indexing enabled="true"

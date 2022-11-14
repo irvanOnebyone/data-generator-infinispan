@@ -28,7 +28,7 @@ public class CacheUtils {
     @Inject
     private InfinispanCatalogueConfig infinispanConfig;
 
-    private URL tableStoreCacheConfig;
+    public URL tableStoreCacheConfig;
 
     public void setTableStoreCacheConfig(URL tableStoreCacheConfig) {
         this.tableStoreCacheConfig = tableStoreCacheConfig;
@@ -36,7 +36,6 @@ public class CacheUtils {
 
     public RemoteCache<String, String> createCache(String cacheName, String table, Class<? extends MessageKey> key, String message) {
         RemoteCache<String, String> entityCache = null;
-
         try {
             String cacheConfig = replaceDBConnectionConfiguration(tableStoreCacheConfig, table, key, message, message + "_" + cacheName);
             entityCache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
@@ -48,7 +47,8 @@ public class CacheUtils {
         return entityCache;
     }
 
-    private String replaceDBConnectionConfiguration(URL cacheConfig, String table, Class<? extends MessageKey> key, String message, String indexPath) throws IOException {
+    public String replaceDBConnectionConfiguration(URL cacheConfig, String table, Class<? extends MessageKey> key, String message, String indexPath) throws IOException {
+    	LOGGER.debug("replaceDBConnectionConfiguration"+"\n"+cacheConfig);
         String config = IOUtils.toString(cacheConfig, StandardCharsets.UTF_8)
                 .replace("TABLE_NAME", table)
                 .replace("MESSAGE_KEY", key.getSimpleName())
@@ -60,7 +60,6 @@ public class CacheUtils {
                 .replace("DIALECT", infinispanConfig.dialect())
                 .replace("DRIVER", infinispanConfig.driver())
                 .replace("INDEXED_PATH", indexPath);
-        LOGGER.debug(config);
         return config;
     }
 
@@ -86,7 +85,6 @@ public class CacheUtils {
 
     public static boolean putEntityIntoCache(RemoteCacheManager cacheManager, String cacheName, MessageKey key, MessageEntity value) {
         RemoteCache<MessageKey, MessageEntity> cache = findCache(cacheManager, cacheName);
-
         try {
             if (value != null) {
                 cache.put(key, value);
